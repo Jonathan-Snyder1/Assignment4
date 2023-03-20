@@ -1,47 +1,96 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 int extraMemoryAllocated;
 
 // implement merge sort
 // extraMemoryAllocated counts bytes of extra memory allocated
+void merge(int pData[], int l, int m, int r)
+{
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 =  r - m;
+
+    // create temp arrays
+    int L[n1], R[n2];
+
+    // Copy data to temp arrays L[] and R[]
+    for (i = 0; i < n1; i++)
+        L[i] = pData[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = pData[m + 1+ j];
+
+    // Merge the temp arrays back into pData[l..r]
+    i = 0; // Initial index of first subarray
+    j = 0; // Initial index of second subarray
+    k = l; // Initial index of merged subarray
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            pData[k] = L[i];
+            i++;
+        }
+        else
+        {
+            pData[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy the remaining elements of L[], if there are any
+    while (i < n1)
+    {
+        pData[k] = L[i];
+        i++;
+        k++;
+    }
+
+    // Copy the remaining elements of R[], if there are any
+    while (j < n2)
+    {
+        pData[k] = R[j];
+        j++;
+        k++;
+    }
+    extraMemoryAllocated += sizeof(int)*(n1+n2);
+}
+
 void mergeSort(int pData[], int l, int r)
 {
-	if (l < r)
-	{
-		// Same as (l+r)/2, but avoids overflow for
-		// large l and h
-		int m = l+(r-l)/2;
+    if (l < r)
+    {
+        // Same as (l+r)/2, but avoids overflow for large l and r
+        int m = l+(r-l)/2;
 
-		// Sort first and second halves
-		mergeSort(pData, l, m);
-		mergeSort(pData, m+1, r);
+        // Sort first and second halves
+        mergeSort(pData, l, m);
+        mergeSort(pData, m+1, r);
 
-		merge(pData, l, m, r);
-	}
+        merge(pData, l, m, r);
+    }
 }
 
 // implement insertion sort
 // extraMemoryAllocated counts bytes of memory allocated
 void insertionSort(int* pData, int n)
 {
-	int i, key, j;
-	for (i = 1; i < n; i++)
-	{
-		key = pData[i];
-		j = i - 1;
+    int i, key, j;
+    for (i = 1; i < n; i++)
+    {
+        key = pData[i];
+        j = i - 1;
 
-		/* Move elements of pData[0..i-1], that are
-		greater than key, to one position ahead
-		of their current position */
-		while (j >= 0 && pData[j] > key)
-		{
-			pData[j + 1] = pData[j];
-			j = j - 1;
-		}
-		pData[j + 1] = key;
-	}
+        while (j >= 0 && pData[j] > key)
+        {
+            pData[j + 1] = pData[j];
+            j = j - 1;
+        }
+        pData[j + 1] = key;
+    }
 
 }
 
@@ -49,37 +98,34 @@ void insertionSort(int* pData, int n)
 // extraMemoryAllocated counts bytes of extra memory allocated
 void bubbleSort(int* pData, int n)
 {
-	int i,j,temp;
-
-	for(i=0;i<n-1;i++){
-        for(j=0;j<n-i-1;j++){
-            if(pData[j]>pData[j+1]){
-                temp=pData[j];
-                pData[j]=pData[j+1];
-                pData[j+1]=temp;
+	int i, j;
+    for (i = 0; i < n-1; i++)
+    {
+        for (j = 0; j < n-i-1; j++)
+        {
+            if (pData[j] > pData[j+1])
+            {
+                int temp = pData[j];
+                pData[j] = pData[j+1];
+                pData[j+1] = temp;
             }
         }
-	}
+    }
 }
 
 // implement selection sort
 // extraMemoryAllocated counts bytes of extra memory allocated
 void selectionSort(int* pData, int n)
 {
-	 int i, j, min_idx;
+    int i, j, min_idx;
 
-    // One by one move boundary of unsorted subarray
-    for (i = 0; i < n-1; i++)
-    {
-        // Find the minimum element in unsorted array
+    for (i = 0; i < n - 1; i++) {
         min_idx = i;
-        for (j = i+1; j < n; j++)
-          if (pData[j] < pData[min_idx])
-            min_idx = j;
+        for (j = i + 1; j < n; j++)
+            if (pData[j] < pData[min_idx])
+                min_idx = j;
 
-        // Swap the found minimum element with the first element
         int temp = pData[min_idx];
-		extraMemoryAllocated += sizeof(int);
         pData[min_idx] = pData[i];
         pData[i] = temp;
     }
