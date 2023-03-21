@@ -13,16 +13,18 @@ void merge(int pData[], int l, int m, int r)
     int n1 = m - l + 1;
     int n2 =  r - m;
 
+    //temp arrays
     int L[n1], R[n2];
 
+    //fill temp arrays
     for (i = 0; i < n1; i++)
         L[i] = pData[l + i];
     for (j = 0; j < n2; j++)
         R[j] = pData[m + 1+ j];
 
-    i = 0;
-    j = 0;
-    k = l;
+    i = 0;// Initial index of first subarray
+    j = 0;// Initial index of second subarray
+    k = l;// Initial index of merged subarray
     while (i < n1 && j < n2)
     {
         if (L[i] <= R[j])
@@ -78,6 +80,7 @@ void insertionSort(int* pData, int n)
         key = pData[i];
         j = i - 1;
 
+        //inner loop moves element while greater than key
         while (j >= 0 && pData[j] > key)
         {
             pData[j + 1] = pData[j];
@@ -97,6 +100,7 @@ void bubbleSort(int* pData, int n)
     {
         for (j = 0; j < n-i-1; j++)
         {
+            //swap the two if the second one is greater
             if (pData[j] > pData[j+1])
             {
                 int temp = pData[j];
@@ -111,17 +115,22 @@ void bubbleSort(int* pData, int n)
 // extraMemoryAllocated counts bytes of extra memory allocated
 void selectionSort(int* pData, int n)
 {
-    int i, j, min_idx;
+    int i, j, min_pos;
 
+    // swap starting element with the smallest element in the array, then go to next index and swap it with the smallest index
+    //n-1 bc last element is sorted by default
     for (i = 0; i < n - 1; i++) {
-        min_idx = i;
+        min_pos = i;
+        //inner loop finds minimum number in the unsorted section
         for (j = i + 1; j < n; j++)
-            if (pData[j] < pData[min_idx])
-                min_idx = j;
+            if (pData[j] < pData[min_pos])
+                min_pos = j;//update min position
 
-        int temp = pData[min_idx];
-        pData[min_idx] = pData[i];
-        pData[i] = temp;
+        if(min_pos != i){//check to see if swap is needed
+            int temp = pData[i];
+            pData[i] = pData[min_pos];
+            pData[min_pos] = temp;
+        }
     }
 }
 
@@ -137,6 +146,10 @@ int parseData(char *inputFileName, int **ppData)
 		fscanf(inFile,"%d\n",&dataSz);
 		*ppData = (int *)malloc(sizeof(int) * dataSz);
 		// Implement parse data block
+		for (int i = 0; i < dataSz; i++) {
+            fscanf(inFile, "%d", &(*ppData)[i]);
+        }
+        fclose(inFile);
 	}
 
 	return dataSz;
